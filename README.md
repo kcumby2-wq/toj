@@ -1,6 +1,6 @@
 # TOJ Campaign Builder
 
-![CI Verify](https://github.com/<OWNER>/<REPO>/actions/workflows/ci-verify.yml/badge.svg)
+![CI Verify](https://github.com/kcumby2-wq/TojCampaign/actions/workflows/ci-verify.yml/badge.svg)
 
 A local-first Node/Express app for running tracked campaigns: UTM link builder, QR code generator, contact CSV manager, saved templates, and saved contact sets — all gated behind a real email/password login (bcrypt-hashed, stored locally in JSON).
 
