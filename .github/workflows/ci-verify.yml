@@ -1,0 +1,62 @@
+name: CI Verify
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/subjectmedia
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install PostgreSQL client and PowerShell shim
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          if ! command -v powershell >/dev/null 2>&1; then
+            sudo ln -s "$(command -v pwsh)" /usr/local/bin/powershell
+          fi
+
+      - name: Create subjectmedia database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          createdb -h localhost -U postgres subjectmedia || true
+
+      - name: Initialize database
+        run: npm run db:reset
+
+      - name: Run CI verification
+        run: npm run ci:verify

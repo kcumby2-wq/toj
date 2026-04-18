@@ -1,0 +1,921 @@
+openapi: 3.0.3
+info:
+  title: Subject Media Partner Platform API
+  version: 1.0.0
+  description: Phase 1 API contract for Agency Hub and Client Partner Portal.
+servers:
+  - url: https://api.subjectmedia.com/v1
+  - url: http://localhost:3000/api
+
+tags:
+  - name: Auth
+  - name: Onboarding
+  - name: Billing
+  - name: Campaigns
+  - name: Tracking
+  - name: Leads
+  - name: Deliverables
+  - name: Messages
+  - name: Reports
+  - name: Clients
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout user
+      responses:
+        '200':
+          description: Logged out
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current session
+      responses:
+        '200':
+          description: Session info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+
+  /onboarding/start:
+    post:
+      tags: [Onboarding]
+      summary: Start 4-step onboarding flow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingStartRequest'
+      responses:
+        '200':
+          description: Started
+
+  /onboarding/complete:
+    post:
+      tags: [Onboarding]
+      summary: Complete onboarding and prepare billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingCompleteRequest'
+      responses:
+        '200':
+          description: Completed
+
+  /billing/create-invoice:
+    post:
+      tags: [Billing]
+      summary: Create Stripe invoice for onboarding or recurring service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvoiceRequest'
+      responses:
+        '200':
+          description: Invoice created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+
+  /billing/status:
+    get:
+      tags: [Billing]
+      summary: Get billing status for current client org
+      responses:
+        '200':
+          description: Billing status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingStatusResponse'
+
+  /billing/webhook/stripe:
+    post:
+      tags: [Billing]
+      summary: Stripe webhook endpoint
+      responses:
+        '200':
+          description: Webhook accepted
+
+  /clients:
+    get:
+      tags: [Clients]
+      summary: List clients (agency roles)
+      responses:
+        '200':
+          description: Client list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientSummary'
+
+  /clients/{clientId}:
+    get:
+      tags: [Clients]
+      summary: Get client details
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Client details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDetail'
+    patch:
+      tags: [Clients]
+      summary: Update client account
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientUpdateRequest'
+      responses:
+        '200':
+          description: Updated
+
+  /campaigns:
+    get:
+      tags: [Campaigns]
+      summary: List campaigns in current tenant scope
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: clientOrgId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Campaign list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Campaign'
+    post:
+      tags: [Campaigns]
+      summary: Create campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCampaignRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+
+  /campaigns/{campaignId}:
+    get:
+      tags: [Campaigns]
+      summary: Get campaign details
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      responses:
+        '200':
+          description: Campaign details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+    patch:
+      tags: [Campaigns]
+      summary: Update campaign
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCampaignRequest'
+      responses:
+        '200':
+          description: Updated
+
+  /campaigns/{campaignId}/assets/generate:
+    post:
+      tags: [Campaigns]
+      summary: Generate UTM links and QR code assets
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateAssetsRequest'
+      responses:
+        '200':
+          description: Generated assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CampaignAsset'
+
+  /track/event:
+    post:
+      tags: [Tracking]
+      summary: Public tracking ingestion endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackEventRequest'
+      responses:
+        '200':
+          description: Tracked
+
+  /analytics/overview:
+    get:
+      tags: [Tracking]
+      summary: Dashboard summary metrics
+      responses:
+        '200':
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsOverview'
+
+  /analytics/campaigns/{campaignId}:
+    get:
+      tags: [Tracking]
+      summary: Campaign-level analytics
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      responses:
+        '200':
+          description: Campaign analytics
+
+  /leads:
+    get:
+      tags: [Leads]
+      summary: List leads with filters
+      parameters:
+        - in: query
+          name: campaignId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: source
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Leads list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lead'
+    post:
+      tags: [Leads]
+      summary: Create lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLeadRequest'
+      responses:
+        '201':
+          description: Lead created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+
+  /leads/{leadId}:
+    patch:
+      tags: [Leads]
+      summary: Update lead status or data
+      parameters:
+        - $ref: '#/components/parameters/LeadId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLeadRequest'
+      responses:
+        '200':
+          description: Updated
+
+  /leads/{leadId}/convert:
+    post:
+      tags: [Leads]
+      summary: Mark lead as converted and attach revenue
+      parameters:
+        - $ref: '#/components/parameters/LeadId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [revenueAmount]
+              properties:
+                revenueAmount:
+                  type: number
+                  minimum: 0
+      responses:
+        '200':
+          description: Converted
+
+  /deliverables:
+    get:
+      tags: [Deliverables]
+      summary: List deliverables
+      responses:
+        '200':
+          description: Deliverables list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Deliverable'
+    post:
+      tags: [Deliverables]
+      summary: Create deliverable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeliverableRequest'
+      responses:
+        '201':
+          description: Created
+
+  /deliverables/{deliverableId}:
+    patch:
+      tags: [Deliverables]
+      summary: Update deliverable
+      parameters:
+        - $ref: '#/components/parameters/DeliverableId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDeliverableRequest'
+      responses:
+        '200':
+          description: Updated
+
+  /messages/threads:
+    get:
+      tags: [Messages]
+      summary: List message threads
+      responses:
+        '200':
+          description: Thread list
+
+  /messages/threads/{threadId}:
+    get:
+      tags: [Messages]
+      summary: Get thread messages
+      parameters:
+        - $ref: '#/components/parameters/ThreadId'
+      responses:
+        '200':
+          description: Messages list
+    post:
+      tags: [Messages]
+      summary: Post message to thread
+      parameters:
+        - $ref: '#/components/parameters/ThreadId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body:
+                  type: string
+      responses:
+        '201':
+          description: Sent
+
+  /reports/summary:
+    get:
+      tags: [Reports]
+      summary: Summary report for selected period
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Summary report
+
+  /reports/revenue-by-campaign:
+    get:
+      tags: [Reports]
+      summary: Revenue grouped by campaign
+      responses:
+        '200':
+          description: Revenue report
+
+  /reports/conversion-trend:
+    get:
+      tags: [Reports]
+      summary: Conversion trend data
+      responses:
+        '200':
+          description: Trend report
+
+  /reports/lead-sources:
+    get:
+      tags: [Reports]
+      summary: Lead source breakdown
+      responses:
+        '200':
+          description: Source report
+
+components:
+  securitySchemes:
+    SessionAuth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+
+  parameters:
+    ClientId:
+      in: path
+      name: clientId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CampaignId:
+      in: path
+      name: campaignId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    LeadId:
+      in: path
+      name: leadId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    DeliverableId:
+      in: path
+      name: deliverableId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ThreadId:
+      in: path
+      name: threadId
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        fullName:
+          type: string
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        email:
+          type: string
+
+    MeResponse:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+        userId:
+          type: string
+          format: uuid
+        email:
+          type: string
+        role:
+          type: string
+        organizationId:
+          type: string
+          format: uuid
+
+    OnboardingStartRequest:
+      type: object
+      required: [companyName, contactEmail]
+      properties:
+        companyName:
+          type: string
+        contactEmail:
+          type: string
+          format: email
+        goals:
+          type: array
+          items:
+            type: string
+
+    OnboardingCompleteRequest:
+      type: object
+      required: [clientOrgId]
+      properties:
+        clientOrgId:
+          type: string
+          format: uuid
+        campaignDrafts:
+          type: array
+          items:
+            type: object
+
+    CreateInvoiceRequest:
+      type: object
+      required: [clientOrgId, amount, currency]
+      properties:
+        clientOrgId:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          minimum: 0
+        currency:
+          type: string
+
+    InvoiceResponse:
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          format: uuid
+        stripeInvoiceId:
+          type: string
+        status:
+          type: string
+          enum: [draft, open, paid, void, uncollectible]
+
+    BillingStatusResponse:
+      type: object
+      properties:
+        accountStatus:
+          type: string
+        onboardingStatus:
+          type: string
+        lastInvoiceStatus:
+          type: string
+
+    ClientSummary:
+      type: object
+      properties:
+        clientOrgId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        accountStatus:
+          type: string
+
+    ClientDetail:
+      allOf:
+        - $ref: '#/components/schemas/ClientSummary'
+        - type: object
+          properties:
+            onboardingStatus:
+              type: string
+            stripeCustomerId:
+              type: string
+
+    ClientUpdateRequest:
+      type: object
+      properties:
+        accountStatus:
+          type: string
+        onboardingStatus:
+          type: string
+
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientOrgId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum: [draft, active, paused, completed, archived]
+        budgetAmount:
+          type: number
+          minimum: 0
+
+    CreateCampaignRequest:
+      type: object
+      required: [clientOrgId, name]
+      description: If both startsOn and endsOn are provided, startsOn must be less than or equal to endsOn.
+      properties:
+        clientOrgId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        goalSummary:
+          type: string
+        startsOn:
+          type: string
+          format: date
+        endsOn:
+          type: string
+          format: date
+
+    UpdateCampaignRequest:
+      type: object
+      description: If both startsOn and endsOn are provided, startsOn must be less than or equal to endsOn.
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [draft, active, paused, completed, archived]
+        goalSummary:
+          type: string
+        budgetAmount:
+          type: number
+          minimum: 0
+        startsOn:
+          type: string
+          format: date
+        endsOn:
+          type: string
+          format: date
+
+    GenerateAssetsRequest:
+      type: object
+      required: [source, medium, campaignParam]
+      properties:
+        source:
+          type: string
+        medium:
+          type: string
+        campaignParam:
+          type: string
+        content:
+          type: string
+        term:
+          type: string
+
+    CampaignAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        trackingUrl:
+          type: string
+        qrUrl:
+          type: string
+
+    TrackEventRequest:
+      type: object
+      required: [type, campaignId]
+      description: assetId, when provided, must belong to the same client organization as campaignId.
+      properties:
+        type:
+          type: string
+          enum: [click, scan, pageview, lead_submit, conversion]
+        campaignId:
+          type: string
+          format: uuid
+        assetId:
+          type: string
+          format: uuid
+        source:
+          type: string
+        referrer:
+          type: string
+        deviceType:
+          type: string
+        meta:
+          type: object
+
+    AnalyticsOverview:
+      type: object
+      properties:
+        totalClicks:
+          type: integer
+        totalLeads:
+          type: integer
+        conversions:
+          type: integer
+        revenue:
+          type: number
+
+    Lead:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        campaignId:
+          type: string
+          format: uuid
+        source:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [new, qualified, contacted, proposal, won, lost]
+        revenueAmount:
+          type: number
+          minimum: 0
+
+    CreateLeadRequest:
+      type: object
+      required: [clientOrgId]
+      properties:
+        clientOrgId:
+          type: string
+          format: uuid
+        campaignId:
+          type: string
+          format: uuid
+        source:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+
+    UpdateLeadRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [new, qualified, contacted, proposal, won, lost]
+        revenueAmount:
+          type: number
+          minimum: 0
+        notes:
+          type: string
+
+    Deliverable:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        status:
+          type: string
+          enum: [pending, in_progress, completed, blocked]
+        dueDate:
+          type: string
+          format: date
+
+    CreateDeliverableRequest:
+      type: object
+      required: [clientOrgId, title]
+      properties:
+        clientOrgId:
+          type: string
+          format: uuid
+        campaignId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date
+
+    UpdateDeliverableRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, in_progress, completed, blocked]
+        dueDate:
+          type: string
+          format: date
+
+security:
+  - SessionAuth: []

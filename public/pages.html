@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CreatorLand - Landing Page Builder</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #f5f7fa; }
+    
+    .header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .logo { font-size: 20px; font-weight: 700; color: #667eea; }
+    
+    .user-menu {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn.primary { background: #667eea; color: white; }
+    .btn.primary:hover { background: #764ba2; }
+    .btn.secondary { background: white; color: #667eea; border: 1px solid #667eea; }
+    .btn.secondary:hover { background: #f5f7fa; }
+    .btn.danger { background: #f56565; color: white; }
+    .btn.danger:hover { background: #e53e3e; }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    
+    .page-title { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .page-subtitle { color: #666; margin-bottom: 32px; }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 24px;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .template-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .template-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .template-preview {
+      height: 200px;
+      background: #f5f7fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #999;
+    }
+    
+    .template-info {
+      padding: 16px;
+    }
+    
+    .template-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+    .template-desc { font-size: 14px; color: #666; margin-bottom: 12px; }
+    
+    .page-list {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .page-item {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-item:last-child { border-bottom: none; }
+    
+    .page-item-left {
+      flex: 1;
+    }
+    
+    .page-item-title { font-weight: 600; margin-bottom: 4px; }
+    .page-item-meta { font-size: 12px; color: #999; }
+    
+    .page-item-right {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal.active { display: flex; }
+    
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .auth-required {
+      text-align: center;
+      padding: 64px 24px;
+    }
+    
+    .auth-icon { font-size: 48px; margin-bottom: 16px; }
+    
+    .hidden { display: none !important; }
+    
+    .plan-badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .plan-badge.pro { background: #fef08a; color: #854d0e; }
+    .plan-badge.unlimited { background: #d1fae5; color: #065f46; }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab-link {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-link.active {
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+    }
+
+    .tab-count {
+      background: #c7d2fe;
+      color: #312e81;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 2px 8px;
+      min-width: 22px;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .tab-link.active .tab-count {
+      background: #374151;
+      color: #fff;
+    }
+
+    .view-panel {
+      display: none;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    .panel-shell {
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      margin-bottom: 16px;
+    }
+
+    .pages-shell {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .analytics-shell {
+      background: linear-gradient(180deg, #f5f3ff 0%, #eef2ff 100%);
+      border-color: #c7d2fe;
+    }
+
+    .subscribers-shell {
+      background: linear-gradient(180deg, #ecfeff 0%, #f8fafc 100%);
+      border-color: #bae6fd;
+    }
+
+    .marketplace-shell {
+      background: linear-gradient(180deg, #fff7ed 0%, #fffbeb 100%);
+      border-color: #fed7aa;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .metric-pill {
+      background: #fff;
+      border: 1px solid #ddd6fe;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #312e81;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .mini-list-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mini-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .chip.market {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .subscriber-card {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #dbeafe;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+
+    .subscriber-email {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .subscriber-meta {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .marketplace-price {
+      font-size: 22px;
+      font-weight: 800;
+      color: #9a3412;
+      margin-top: 6px;
+    }
+
+    .sparkline {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 70px;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #ddd6fe;
+    }
+
+    .spark-bar {
+      flex: 1;
+      min-width: 6px;
+      background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
+      border-radius: 6px 6px 2px 2px;
+      opacity: 0.9;
+    }
+
+    .market-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .filter-chip {
+      border: 1px solid #fdba74;
+      background: #fff7ed;
+      color: #9a3412;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: capitalize;
+    }
+
+    .filter-chip.active {
+      background: #9a3412;
+      color: #fff;
+      border-color: #9a3412;
+    }
+
+    .auth-card-lite {
+      max-width: 420px;
+      margin: 18px auto 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: left;
+    }
+
+    .auth-switch {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .auth-switch button {
+      flex: 1;
+      border: 1px solid #c7d2fe;
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 8px;
+      padding: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .auth-switch button.active {
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+    }
+
+    .auth-error {
+      font-size: 13px;
+      color: #b91c1c;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    .help-link {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .help-link a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">CreatorLand</div>
+    <div class="user-menu">
+      <span id="userEmail"></span>
+      <button class="btn secondary" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Auth View -->
+    <div id="authSection" style="display: none;">
+      <div class="auth-required">
+        <div class="auth-icon">🔐</div>
+        <h2 style="margin-bottom: 12px;">Please log in</h2>
+        <p>You need to log in to create and manage landing pages.</p>
+        <div class="auth-card-lite">
+          <div class="auth-switch">
+            <button id="liteLoginTab" class="active" type="button" onclick="switchLiteAuth('login')">Login</button>
+            <button id="liteRegisterTab" type="button" onclick="switchLiteAuth('register')">Register</button>
+          </div>
+
+          <form id="liteLoginForm" onsubmit="liteLogin(event)">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" id="liteLoginEmail" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-input" id="liteLoginPassword" required>
+            </div>
+            <button class="btn primary" type="submit" style="width:100%;">Log In</button>
+          </form>
+
+          <form id="liteRegisterForm" class="hidden" onsubmit="liteRegister(event)">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" id="liteRegEmail" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password (min 6 chars)</label>
+              <input type="password" class="form-input" id="liteRegPassword" minlength="6" required>
+            </div>
+            <button class="btn primary" type="submit" style="width:100%;">Create Account</button>
+          </form>
+
+          <div id="liteAuthError" class="auth-error"></div>
+          <div class="help-link">You can also use the original auth page at <a href="/">/</a>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboardSection" style="display: none;">
+      <div style="margin-bottom: 20px;">
+        <h1 class="page-title">Creator Workspace</h1>
+        <p class="page-subtitle">Manage your pages, analytics, subscribers, and premium templates in dedicated views.</p>
+      </div>
+
+      <div class="tab-nav">
+        <button id="tab-pages" class="tab-link active" onclick="switchView('pages')">Pages <span id="tabCountPages" class="tab-count">0</span></button>
+        <button id="tab-analytics" class="tab-link" onclick="switchView('analytics')">Analytics <span id="tabCountAnalytics" class="tab-count">0</span></button>
+        <button id="tab-subscribers" class="tab-link" onclick="switchView('subscribers')">Subscribers <span id="tabCountSubscribers" class="tab-count">0</span></button>
+        <button id="tab-marketplace" class="tab-link" onclick="switchView('marketplace')">Marketplace <span id="tabCountMarketplace" class="tab-count">0</span></button>
+      </div>
+
+      <div id="view-pages" class="view-panel active">
+        <div class="panel-shell pages-shell" style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+          <button class="btn primary" onclick="showCreateModal()">+ New Page</button>
+        </div>
+
+        <div id="planInfo" class="card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-weight: 600; margin-bottom: 4px;">Current Plan: <span id="planName"></span></p>
+              <p style="font-size: 14px; color: #666;">Pages: <span id="pagesCount">0</span> / <span id="pagesLimit">2</span></p>
+            </div>
+            <button class="btn primary" onclick="showUpgradeModal()">Upgrade</button>
+          </div>
+        </div>
+
+        <div id="pagesList" class="page-list"></div>
+
+        <div id="emptyState" style="text-align: center; padding: 64px 24px;">
+          <p style="font-size: 48px; margin-bottom: 16px;">📄</p>
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No landing pages yet</p>
+          <p style="color: #666; margin-bottom: 24px;">Create your first landing page to get started</p>
+          <button class="btn primary" onclick="showCreateModal()">Create Landing Page</button>
+        </div>
+      </div>
+
+      <div id="view-analytics" class="view-panel">
+        <div id="analyticsCard" class="card analytics-shell" style="margin-top: 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3>Advanced Analytics</h3>
+            <button class="btn secondary" onclick="loadDashboardAnalytics()">Refresh</button>
+          </div>
+          <div id="analyticsSummary" class="metrics-grid"></div>
+          <div>
+            <p style="font-weight:600; margin:12px 0 6px;">7-Day Trend</p>
+            <div id="analyticsSparkline" class="sparkline"></div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top: 16px;">
+            <div>
+              <p style="font-weight:600; margin-bottom:8px;">Traffic Sources</p>
+              <div id="analyticsSources"></div>
+            </div>
+            <div>
+              <p style="font-weight:600; margin-bottom:8px;">Device Breakdown</p>
+              <div id="analyticsDevices"></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <p style="font-weight:600; margin-bottom:8px;">Top Pages</p>
+            <div id="analyticsTopPages"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-subscribers" class="view-panel">
+        <div id="subscribersCard" class="card subscribers-shell" style="margin-top: 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3>Email Subscribers</h3>
+            <button class="btn secondary" onclick="loadSubscribers()">Refresh</button>
+          </div>
+          <div id="subscribersList"></div>
+        </div>
+      </div>
+
+      <div id="view-marketplace" class="view-panel">
+        <div id="marketplaceCard" class="card marketplace-shell" style="margin-top: 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3>Template Marketplace</h3>
+            <button class="btn secondary" onclick="loadMarketplace()">Refresh</button>
+          </div>
+          <div id="marketplaceFilters" class="market-filters"></div>
+          <div id="marketplaceList" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Page Modal -->
+    <div id="createModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">Choose a Template</div>
+        <div id="templatesGrid" class="grid"></div>
+        <button class="btn secondary" onclick="closeModal('createModal')" style="width: 100%; margin-top: 24px;">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Edit Page Modal -->
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">Edit Landing Page</div>
+        <form onsubmit="savePage(event)">
+          <div class="form-group">
+            <label class="form-label">Page Title</label>
+            <input type="text" class="form-input" id="editPageTitle" required>
+          </div>
+          <div id="customizationFields"></div>
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="submit" class="btn primary" style="flex: 1;">Save</button>
+            <button type="button" class="btn secondary" onclick="closeModal('editModal')" style="flex: 1;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Upgrade Plan Modal -->
+    <div id="upgradeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">Upgrade Your Plan</div>
+        <div id="plansGrid" class="grid" style="grid-template-columns: 1fr;"></div>
+        <button class="btn secondary" onclick="closeModal('upgradeModal')" style="width: 100%; margin-top: 24px;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let allPages = [];
+    let allTemplates = [];
+    let marketplaceTemplates = [];
+    let currentPage = null;
+    let currentView = 'pages';
+    let dashboardAnalytics = null;
+    let subscribersCount = 0;
+    let activeMarketplaceCategory = 'all';
+    let userPlan = { plan: 'free', pagesLimit: 2 };
+
+    function switchLiteAuth(mode) {
+      const isLogin = mode === 'login';
+      document.getElementById('liteLoginForm').classList.toggle('hidden', !isLogin);
+      document.getElementById('liteRegisterForm').classList.toggle('hidden', isLogin);
+      document.getElementById('liteLoginTab').classList.toggle('active', isLogin);
+      document.getElementById('liteRegisterTab').classList.toggle('active', !isLogin);
+      document.getElementById('liteAuthError').textContent = '';
+    }
+
+    async function liteLogin(e) {
+      e.preventDefault();
+      const err = document.getElementById('liteAuthError');
+      err.textContent = '';
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('liteLoginEmail').value,
+          password: document.getElementById('liteLoginPassword').value,
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        err.textContent = data.error || 'Login failed';
+        return;
+      }
+      window.location.reload();
+    }
+
+    async function liteRegister(e) {
+      e.preventDefault();
+      const err = document.getElementById('liteAuthError');
+      err.textContent = '';
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('liteRegEmail').value,
+          password: document.getElementById('liteRegPassword').value,
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        err.textContent = data.error || 'Registration failed';
+        return;
+      }
+      window.location.reload();
+    }
+
+    // Initialize
+    async function init() {
+      const meRes = await fetch('/api/me');
+      const me = await meRes.json();
+
+      if (!me.authenticated) {
+        document.getElementById('authSection').style.display = 'block';
+        return;
+      }
+
+      currentUser = me.email;
+      document.getElementById('userEmail').textContent = currentUser;
+      document.getElementById('dashboardSection').style.display = 'block';
+
+      await loadTemplates();
+      await loadPages();
+      await loadUserPlan();
+      renderPages();
+      await loadDashboardAnalytics();
+      await loadSubscribers();
+      await loadMarketplace();
+      switchView('pages');
+      updateTabCounts();
+    }
+
+    function updateTabCounts() {
+      const pagesBadge = document.getElementById('tabCountPages');
+      const analyticsBadge = document.getElementById('tabCountAnalytics');
+      const subscribersBadge = document.getElementById('tabCountSubscribers');
+      const marketplaceBadge = document.getElementById('tabCountMarketplace');
+
+      if (pagesBadge) pagesBadge.textContent = String(allPages.length);
+      if (analyticsBadge) {
+        const clicks7 = dashboardAnalytics?.totals?.clicksLast7Days || 0;
+        analyticsBadge.textContent = String(clicks7);
+      }
+      if (subscribersBadge) subscribersBadge.textContent = String(subscribersCount);
+      if (marketplaceBadge) {
+        const unlocked = marketplaceTemplates.filter((t) => t.unlocked).length;
+        marketplaceBadge.textContent = `${unlocked}/${marketplaceTemplates.length}`;
+      }
+    }
+
+    function switchView(view) {
+      currentView = view;
+      ['pages', 'analytics', 'subscribers', 'marketplace'].forEach((name) => {
+        const tab = document.getElementById(`tab-${name}`);
+        const panel = document.getElementById(`view-${name}`);
+        if (tab) tab.classList.toggle('active', name === view);
+        if (panel) panel.classList.toggle('active', name === view);
+      });
+    }
+
+    async function loadTemplates() {
+      const res = await fetch('/api/pages/templates');
+      allTemplates = await res.json();
+    }
+
+    async function loadPages() {
+      const res = await fetch('/api/pages');
+      allPages = await res.json();
+      updateTabCounts();
+    }
+
+    async function loadUserPlan() {
+      const res = await fetch('/api/billing/subscription');
+      userPlan = await res.json();
+      document.getElementById('planName').textContent = userPlan.plan.toUpperCase();
+      document.getElementById('pagesLimit').textContent = userPlan.pagesLimit;
+      document.getElementById('pagesCount').textContent = allPages.length;
+      document.getElementById('planInfo').style.display = 'block';
+    }
+
+    function renderPages() {
+      const container = document.getElementById('pagesList');
+      
+      if (allPages.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        container.style.display = 'none';
+        return;
+      }
+
+      document.getElementById('emptyState').style.display = 'none';
+      container.style.display = 'block';
+      
+      container.innerHTML = allPages.map(page => `
+        <div class="page-item">
+          <div class="page-item-left">
+            <div class="page-item-title">${page.pageTitle}</div>
+            <div class="page-item-meta">
+              Created ${new Date(page.createdAt).toLocaleDateString()} • ${page.clicks} clicks
+            </div>
+          </div>
+          <div class="page-item-right">
+            <button class="btn secondary" onclick="editPage('${page.id}')">Edit</button>
+            <button class="btn secondary" onclick="viewPage('${page.slug}')">Preview</button>
+            <button class="btn danger" onclick="deletePage('${page.id}')">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadDashboardAnalytics() {
+      const res = await fetch('/api/analytics/dashboard');
+      if (!res.ok) return;
+      const data = await res.json();
+      dashboardAnalytics = data;
+
+      const summary = document.getElementById('analyticsSummary');
+      summary.innerHTML = `
+        <div class="metric-pill"><div class="metric-value">${data.totals.pages}</div><div class="metric-label">Pages</div></div>
+        <div class="metric-pill"><div class="metric-value">${data.totals.totalClicks}</div><div class="metric-label">Total Clicks</div></div>
+        <div class="metric-pill"><div class="metric-value">${data.totals.clicksLast7Days}</div><div class="metric-label">Last 7 Days</div></div>
+        <div class="metric-pill"><div class="metric-value">${data.totals.clicksLast30Days}</div><div class="metric-label">Last 30 Days</div></div>
+      `;
+
+      const trendData = Object.entries(data.clicksByDay || {})
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .slice(-7)
+        .map(([, count]) => count);
+      const trendMax = Math.max(...trendData, 1);
+      document.getElementById('analyticsSparkline').innerHTML = trendData.length
+        ? trendData.map((count) => {
+            const height = Math.max(8, Math.round((count / trendMax) * 60));
+            return `<div class="spark-bar" style="height:${height}px" title="${count} clicks"></div>`;
+          }).join('')
+        : '<p style="font-size:12px;color:#6b7280;">No trend data yet.</p>';
+
+      const total = Math.max(data.totals.totalClicks, 1);
+      document.getElementById('analyticsSources').innerHTML = Object.entries(data.bySource)
+        .sort((a, b) => b[1] - a[1])
+        .map(([source, count]) => {
+          const width = Math.round((count / total) * 100);
+          return `<div style="margin-bottom:8px;"><div style="font-size:12px;">${source} (${count})</div><div style="height:8px;background:#e5e7eb;border-radius:999px;"><div style="height:8px;width:${width}%;background:#667eea;border-radius:999px;"></div></div></div>`;
+        })
+        .join('') || '<p style="font-size:13px;color:#666;">No source data yet.</p>';
+
+      const devices = data.byDevice || { mobile: 0, desktop: 0 };
+      const deviceTotal = Math.max((devices.mobile || 0) + (devices.desktop || 0), 1);
+      document.getElementById('analyticsDevices').innerHTML = `
+        <div style="margin-bottom:8px;">Mobile: ${devices.mobile || 0} (${Math.round(((devices.mobile || 0) / deviceTotal) * 100)}%)</div>
+        <div>Desktop: ${devices.desktop || 0} (${Math.round(((devices.desktop || 0) / deviceTotal) * 100)}%)</div>
+      `;
+
+      document.getElementById('analyticsTopPages').innerHTML = (data.topPages || [])
+        .map((p) => `<div class="mini-list-item"><div><strong>${p.title}</strong><div style="font-size:12px;color:#666;">/${p.slug}</div></div><span class="chip">${p.clicks} clicks</span></div>`)
+        .join('') || '<p style="font-size:13px;color:#666;">No page performance yet.</p>';
+
+      updateTabCounts();
+    }
+
+    async function loadSubscribers() {
+      const res = await fetch('/api/email/subscribers');
+      if (!res.ok) return;
+      const subscribers = await res.json();
+      subscribersCount = subscribers.length;
+      document.getElementById('subscribersList').innerHTML = subscribers.length
+        ? subscribers.slice(0, 20).map((s) => `
+          <div class="subscriber-card">
+            <div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">
+              <div><div class="subscriber-email">${s.email}</div><div class="subscriber-meta">${s.name || 'No name'} • ${new Date(s.createdAt).toLocaleString()}</div></div>
+              <span class="chip">Page ${s.pageId.slice(0, 6)}</span>
+            </div>
+          </div>
+        `).join('')
+        : '<p style="font-size:13px;color:#666;">No subscribers captured yet.</p>';
+
+      updateTabCounts();
+    }
+
+    async function loadMarketplace() {
+      const res = await fetch('/api/marketplace/templates');
+      if (!res.ok) return;
+      marketplaceTemplates = await res.json();
+
+      renderMarketplaceFilters();
+      renderMarketplaceTemplates();
+
+      updateTabCounts();
+    }
+
+    function renderMarketplaceFilters() {
+      const categories = ['all', ...new Set(marketplaceTemplates.map((t) => t.category || 'other'))];
+      const filtersEl = document.getElementById('marketplaceFilters');
+      filtersEl.innerHTML = categories.map((category) => {
+        const label = category.replace(/-/g, ' ');
+        const active = category === activeMarketplaceCategory ? 'active' : '';
+        return `<button class="filter-chip ${active}" onclick="setMarketplaceCategory('${category}')">${label}</button>`;
+      }).join('');
+    }
+
+    function setMarketplaceCategory(category) {
+      activeMarketplaceCategory = category;
+      renderMarketplaceFilters();
+      renderMarketplaceTemplates();
+    }
+
+    function renderMarketplaceTemplates() {
+      const visibleTemplates = activeMarketplaceCategory === 'all'
+        ? marketplaceTemplates
+        : marketplaceTemplates.filter((t) => (t.category || 'other') === activeMarketplaceCategory);
+
+      document.getElementById('marketplaceList').innerHTML = visibleTemplates.map((t) => `
+        <div class="template-card" style="cursor:default;">
+          <div class="template-preview">${t.name}</div>
+          <div class="template-info">
+            <div class="template-name">${t.name}</div>
+            <div class="template-desc">${t.description}</div>
+            <div style="font-size:13px; margin:8px 0;">By ${t.author || 'Marketplace'}</div>
+            <div class="marketplace-price">$${((t.priceCents || 0) / 100).toFixed(2)}</div>
+            <div style="margin:8px 0;"><span class="chip market">${(t.category || 'premium').replace(/-/g, ' ')}</span></div>
+            ${t.unlocked
+              ? '<button class="btn secondary" style="width:100%;" disabled>Purchased</button>'
+              : `<button class="btn primary" style="width:100%;" onclick="purchaseTemplate('${t.id}')">Purchase</button>`}
+          </div>
+        </div>
+      `).join('') || '<p style="font-size:13px;color:#666;">No templates in this category yet.</p>';
+    }
+
+    async function purchaseTemplate(templateId) {
+      const ok = confirm('Purchase this template and unlock it in your builder?');
+      if (!ok) return;
+      const res = await fetch('/api/marketplace/purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateId })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Purchase failed');
+        return;
+      }
+
+      alert('Template unlocked. It is now available in your Create Page modal.');
+      await loadMarketplace();
+      await loadTemplates();
+      updateTabCounts();
+    }
+
+    function showCreateModal() {
+      if (allPages.length >= userPlan.pagesLimit) {
+        alert('You\'ve reached your page limit. Upgrade to create more!');
+        showUpgradeModal();
+        return;
+      }
+
+      const grid = document.getElementById('templatesGrid');
+      grid.innerHTML = allTemplates.map(t => `
+        <div class="template-card" onclick="selectTemplate('${t.id}')">
+          <div class="template-preview">${t.name}</div>
+          <div class="template-info">
+            <div class="template-name">${t.name}</div>
+            <div class="template-desc">${t.description}</div>
+            <button class="btn primary" style="width: 100%; margin-top: 8px;">Use Template</button>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('createModal').classList.add('active');
+    }
+
+    async function selectTemplate(templateId) {
+      const pageName = prompt('Page name:');
+      if (!pageName) return;
+
+      const res = await fetch('/api/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateId, pageTitle: pageName })
+      });
+
+      const newPage = await res.json();
+      allPages.push(newPage);
+      currentPage = newPage;
+      closeModal('createModal');
+      switchView('pages');
+      editPage(newPage.id);
+    }
+
+    async function editPage(pageId) {
+      const page = allPages.find(p => p.id === pageId);
+      if (!page) return;
+
+      currentPage = page;
+      const template = allTemplates.find(t => t.id === page.templateId);
+
+      document.getElementById('editPageTitle').value = page.pageTitle;
+
+      const fieldsContainer = document.getElementById('customizationFields');
+      fieldsContainer.innerHTML = Object.entries(template.fields).map(([key, field]) => `
+        <div class="form-group">
+          <label class="form-label">${field.label}</label>
+          ${field.type === 'textarea' ? `
+            <textarea class="form-input" id="field_${key}" rows="4">${page.customizations[key] || field.default}</textarea>
+          ` : field.type === 'color' ? `
+            <input type="color" class="form-input" id="field_${key}" value="${page.customizations[key] || field.default}">
+          ` : `
+            <input type="${field.type}" class="form-input" id="field_${key}" value="${page.customizations[key] || field.default}">
+          `}
+        </div>
+      `).join('');
+
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    async function savePage(e) {
+      e.preventDefault();
+
+      const customizations = {};
+      Object.keys(currentPage.customizations).forEach(key => {
+        const input = document.getElementById(`field_${key}`);
+        if (input) customizations[key] = input.value;
+      });
+      
+      // Add missing customizations
+      const template = allTemplates.find(t => t.id === currentPage.templateId);
+      Object.entries(template.fields).forEach(([key]) => {
+        const input = document.getElementById(`field_${key}`);
+        if (input) customizations[key] = input.value;
+      });
+
+      const res = await fetch(`/api/pages/${currentPage.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageTitle: document.getElementById('editPageTitle').value,
+          customizations
+        })
+      });
+
+      const updated = await res.json();
+      const idx = allPages.findIndex(p => p.id === updated.id);
+      if (idx !== -1) allPages[idx] = updated;
+
+      closeModal('editModal');
+      renderPages();
+    }
+
+    async function deletePage(pageId) {
+      if (!confirm('Delete this page?')) return;
+
+      await fetch(`/api/pages/${pageId}`, { method: 'DELETE' });
+      allPages = allPages.filter(p => p.id !== pageId);
+      renderPages();
+    }
+
+    function viewPage(slug) {
+      window.open(`/pages/${slug}`, '_blank');
+    }
+
+    function showUpgradeModal() {
+      const container = document.getElementById('plansGrid');
+      fetch('/api/billing/plans').then(r => r.json()).then(plans => {
+        container.innerHTML = plans.map(plan => `
+          <div class="card">
+            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">${plan.name}</div>
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 16px;">${plan.priceFormatted}</div>
+            <p style="margin-bottom: 16px; color: #666;">Up to ${plan.pagesLimit} landing pages</p>
+            <button class="btn primary" onclick="upgradePlan('${plan.id}')" style="width: 100%;">
+              ${plan.id === 'free' ? 'Current plan' : 'Upgrade'}
+            </button>
+          </div>
+        `).join('');
+        document.getElementById('upgradeModal').classList.add('active');
+      });
+    }
+
+    async function upgradePlan(plan) {
+      if (plan === 'free') return;
+
+      const res = await fetch('/api/billing/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan })
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        await loadUserPlan();
+        closeModal('upgradeModal');
+        alert(`You've been upgraded to ${plan}!`);
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function logout() {
+      fetch('/api/auth/logout', { method: 'POST' }).then(() => {
+        window.location.reload();
+      });
+    }
+
+    window.onclick = (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('active');
+      }
+    };
+
+    init();
+  </script>
+</body>
+</html>

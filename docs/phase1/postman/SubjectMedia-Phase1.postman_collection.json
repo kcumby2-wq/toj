@@ -1,0 +1,491 @@
+{
+  "info": {
+    "name": "Subject Media Phase 1 API",
+    "description": "Postman collection generated from Phase 1 OpenAPI contract.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "campaignId", "value": "11111111-1111-1111-1111-111111111111" },
+    { "key": "leadId", "value": "22222222-2222-2222-2222-222222222222" },
+    { "key": "deliverableId", "value": "33333333-3333-3333-3333-333333333333" },
+    { "key": "threadId", "value": "44444444-4444-4444-4444-444444444444" },
+    { "key": "clientId", "value": "55555555-5555-5555-5555-555555555555" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner@subjectmedia.com\",\n  \"password\": \"Password123\",\n  \"fullName\": \"Agency Owner\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner@subjectmedia.com\",\n  \"password\": \"Password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Onboarding and Billing",
+      "item": [
+        {
+          "name": "Onboarding Start",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/onboarding/start",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Trails of Joy\",\n  \"contactEmail\": \"ops@trailsofjoy.com\",\n  \"goals\": [\"more leads\", \"better attribution\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Onboarding Complete",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/onboarding/complete",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"campaignDrafts\": [{\"name\": \"Q2 Launch\"}]\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Invoice",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/billing/create-invoice",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"amount\": 12500,\n  \"currency\": \"USD\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Billing Status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/billing/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "List Clients",
+          "request": { "method": "GET", "url": "{{baseUrl}}/clients" }
+        },
+        {
+          "name": "Get Client",
+          "request": { "method": "GET", "url": "{{baseUrl}}/clients/{{clientId}}" }
+        },
+        {
+          "name": "Update Client",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/clients/{{clientId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountStatus\": \"active\",\n  \"onboardingStatus\": \"completed\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campaigns",
+      "item": [
+        {
+          "name": "List Campaigns",
+          "request": { "method": "GET", "url": "{{baseUrl}}/campaigns" }
+        },
+        {
+          "name": "Create Campaign",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/campaigns",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"name\": \"Spring Creator Push\",\n  \"goalSummary\": \"Drive qualified leads\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Campaign",
+          "request": { "method": "GET", "url": "{{baseUrl}}/campaigns/{{campaignId}}" }
+        },
+        {
+          "name": "Update Campaign",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/campaigns/{{campaignId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"active\"\n}" }
+          }
+        },
+        {
+          "name": "Generate Assets",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/campaigns/{{campaignId}}/assets/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"instagram\",\n  \"medium\": \"social\",\n  \"campaignParam\": \"spring_creator_push\",\n  \"content\": \"link_in_bio\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tracking and Analytics",
+      "item": [
+        {
+          "name": "Track Event",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/track/event",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"click\",\n  \"campaignId\": \"{{campaignId}}\",\n  \"source\": \"instagram\",\n  \"deviceType\": \"mobile\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Analytics Overview",
+          "request": { "method": "GET", "url": "{{baseUrl}}/analytics/overview" }
+        },
+        {
+          "name": "Campaign Analytics",
+          "request": { "method": "GET", "url": "{{baseUrl}}/analytics/campaigns/{{campaignId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "List Leads",
+          "request": { "method": "GET", "url": "{{baseUrl}}/leads" }
+        },
+        {
+          "name": "Create Lead",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/leads",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"campaignId\": \"{{campaignId}}\",\n  \"source\": \"instagram\",\n  \"fullName\": \"Taylor Reid\",\n  \"email\": \"taylor@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Lead",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/leads/{{leadId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"qualified\"\n}" }
+          }
+        },
+        {
+          "name": "Convert Lead",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/leads/{{leadId}}/convert",
+            "body": { "mode": "raw", "raw": "{\n  \"revenueAmount\": 3200\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deliverables",
+      "item": [
+        {
+          "name": "List Deliverables",
+          "request": { "method": "GET", "url": "{{baseUrl}}/deliverables" }
+        },
+        {
+          "name": "Create Deliverable",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/deliverables",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"campaignId\": \"{{campaignId}}\",\n  \"title\": \"Landing Page V1\",\n  \"dueDate\": \"2026-05-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Deliverable",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/deliverables/{{deliverableId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"in_progress\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "List Threads",
+          "request": { "method": "GET", "url": "{{baseUrl}}/messages/threads" }
+        },
+        {
+          "name": "Get Thread Messages",
+          "request": { "method": "GET", "url": "{{baseUrl}}/messages/threads/{{threadId}}" }
+        },
+        {
+          "name": "Post Message",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/messages/threads/{{threadId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"body\": \"Campaign assets approved. Publishing today.\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Summary Report",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/summary?from=2026-01-01&to=2026-01-31" }
+        },
+        {
+          "name": "Revenue by Campaign",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/revenue-by-campaign" }
+        },
+        {
+          "name": "Conversion Trend",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/conversion-trend" }
+        },
+        {
+          "name": "Lead Sources",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/lead-sources" }
+        }
+      ]
+    },
+    {
+      "name": "Negative Validation Tests",
+      "item": [
+        {
+          "name": "Campaigns",
+          "item": [
+            {
+              "name": "Create campaign with negative budget",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{baseUrl}}/campaigns",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"name\": \"Invalid Budget Campaign\",\n  \"budgetAmount\": -10\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Expected 400/422', function () {",
+                      "  pm.expect([400, 422]).to.include(pm.response.code);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Create campaign with invalid date window",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{baseUrl}}/campaigns",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"name\": \"Invalid Date Campaign\",\n  \"startsOn\": \"2026-07-01\",\n  \"endsOn\": \"2026-06-01\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Expected 400/422', function () {",
+                      "  pm.expect([400, 422]).to.include(pm.response.code);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Leads",
+          "item": [
+            {
+              "name": "Convert lead with negative revenue",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{baseUrl}}/leads/{{leadId}}/convert",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"revenueAmount\": -1\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Expected 400/422', function () {",
+                      "  pm.expect([400, 422]).to.include(pm.response.code);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Tracking",
+          "item": [
+            {
+              "name": "Track event with invalid type",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{baseUrl}}/track/event",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"invalid_event\",\n  \"campaignId\": \"{{campaignId}}\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Expected 400/422', function () {",
+                      "  pm.expect([400, 422]).to.include(pm.response.code);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Track event with cross-tenant asset",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{baseUrl}}/track/event",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"click\",\n  \"campaignId\": \"{{campaignId}}\",\n  \"assetId\": \"00000000-0000-0000-0000-000000000123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Expected 409/422', function () {",
+                      "  pm.expect([409, 422]).to.include(pm.response.code);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Billing",
+          "item": [
+            {
+              "name": "Create invoice with negative amount",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{baseUrl}}/billing/create-invoice",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clientOrgId\": \"{{clientId}}\",\n  \"amount\": -100,\n  \"currency\": \"USD\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Expected 400/422', function () {",
+                      "  pm.expect([400, 422]).to.include(pm.response.code);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

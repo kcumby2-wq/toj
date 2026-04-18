@@ -1,0 +1,34 @@
+{
+  "name": "creator-land",
+  "version": "1.0.0",
+  "description": "Landing page builder for creators with UTM tracking, QR codes, and analytics",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:schema": "powershell -ExecutionPolicy Bypass -File scripts/db-reset.ps1 -Action schema",
+    "db:seed": "powershell -ExecutionPolicy Bypass -File scripts/db-reset.ps1 -Action seed",
+    "db:smoke": "powershell -ExecutionPolicy Bypass -File scripts/db-reset.ps1 -Action smoke",
+    "db:reset": "powershell -ExecutionPolicy Bypass -File scripts/db-reset.ps1",
+    "api:negative": "start-server-and-test start http://localhost:3000 \"newman run docs/phase1/postman/SubjectMedia-Phase1-negative.postman_collection.json --reporters cli\"",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "audit:full": "npm audit",
+    "ci:verify": "npm run db:smoke && npm run api:negative && npm run audit:prod"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "chart.js": "^4.5.1",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^8.0.5",
+    "qrcode": "^1.5.3",
+    "stripe": "^15.12.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "newman": "^6.2.2",
+    "start-server-and-test": "^3.0.2"
+  }
+}
